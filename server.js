@@ -8,7 +8,7 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + "/index.html");
 });
 
-app.get('/api/cakes', (req, res) => {
+app.get('/api/boards', (req, res) => {
     const boards = [
         {
           "_id": 1,
