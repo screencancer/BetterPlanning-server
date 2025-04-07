@@ -1,0 +1,21 @@
+body{
+    background-color: #045959;
+}
+
+#content{
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    flex-direction: column;
+    background-color: #12a6a6;
+}
+
+a{
+    color: black;
+    text-decoration: none;
+}
+
+a:hover{
+    color: grey;
+    text-decoration: underline;
+}
