@@ -1,0 +1,87 @@
+[
+    {
+      "id": 1,
+      "title": "To Do",
+      "cards": [
+        {
+          "id": 1,
+          "header": "Create A",
+          "task1Name": "testTask",
+          "task2Name": "testTask2",
+          "statusClass": "critical",
+          "classDisplay": "Critical"
+        },
+        {
+          "id": 2,
+          "header": "Do Z",
+          "task1Name": "testTaskVeryUrgent",
+          "task2Name": "testTask2",
+          "statusClass": "urgent",
+          "classDisplay": "Urgent"
+        },
+        {
+          "id": 3,
+          "header": "Create Y",
+          "task1Name": "Needs X",
+          "task2Name": "Needs Y"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "In Progress",
+      "cards": [
+        {
+          "id": 4,
+          "header": "Do Y",
+          "task1Name": "testTaskVeryUrgent3",
+          "task2Name": "testTask24234",
+          "statusClass": "urgent",
+          "classDisplay": "Urgent"
+        },
+        {
+          "id": 5,
+          "header": "Create Y",
+          "task1Name": "Needs X",
+          "task2Name": "Needs Y",
+          "statusClass": "urgent",
+          "classDisplay": "Urgent"
+        },
+        {
+          "id": 6,
+          "header": "Create Z",
+          "task1Name": "Needs X",
+          "task2Name": "Needs Y",
+          "statusClass": "non-urgent",
+          "classDisplay": "Not Urgent",
+          "embeddedContent": {
+            "type": "iframe",
+            "src": "https://www.youtube.com/embed/wDchsz8nmbo?si=rVIMruHPL_vWDH7R",
+            "className": "videoplayer"
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Done",
+      "cards": [
+        {
+          "id": 7,
+          "header": "Create XYZ",
+          "task1Name": "Needs X",
+          "task2Name": "Needs Y",
+          "statusClass": "critical",
+          "classDisplay": "Critical"
+        },
+        {
+            "id": 8,
+            "header": "Create XYZ JSON test",
+            "task1Name": "Needs X",
+            "task2Name": "Needs Y",
+            "statusClass": "critical",
+            "classDisplay": "Critical"
+          }
+      ]
+    }
+  ]
