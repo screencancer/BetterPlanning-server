@@ -200,7 +200,6 @@ app.delete('/api/columns/:columnId/cards/:cardId', (req, res) => {
     if (!card) {
         return res.status(404).send('Card not found');
     }
-
     delete card;
 });
 
