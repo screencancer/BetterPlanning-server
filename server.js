@@ -178,6 +178,32 @@ app.put('/api/columns/:columnId/cards/:cardId', (req, res) => {
     res.json(card);
 });
 
+app.delete('/api/columns/:columnId/cards/:cardId', (req, res) => {
+    const columnId = parseInt(req.params.columnId);
+    const cardId = parseInt(req.params.cardId);
+    const result = validateCard(req.body);
+    const updateData = req.body;
+    console.log(result)
+    console.log(req.body)
+    if(result.error){
+        console.log("I have an error");
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+    
+    const column = cards.find(card => card.id === columnId);
+    if (!column) {
+        return res.status(404).send('Column not found');
+    }
+
+    const card = column.cards.find(card => card.id === cardId);
+    if (!card) {
+        return res.status(404).send('Card not found');
+    }
+
+    delete card;
+});
+
 const validateCard = (cards) => {
     const schema = Joi.object({
         id:Joi.allow(""),
