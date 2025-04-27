@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+const multer = require("multer");
 const cors = require("cors");
 const Joi = require("joi");
 const app = express();
@@ -7,6 +8,17 @@ const mongoose = require("mongoose");
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cors());
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./public/images/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
 
 const columnsToSeed = [
   {
@@ -124,6 +136,7 @@ const columnSchema = new mongoose.Schema({
       task2Name: String,
       statusClass: String,
       classDisplay: String,
+      img: String,
       embeddedContent: {
         type: { type: String },
         src: String,
@@ -152,7 +165,7 @@ app.get("/api/columns", async (req, res) => {
   }
 });
 
-app.post("/api/columns/:id", async (req, res) => {
+app.post("/api/columns/:id", upload.single("img"), async (req, res) => {
   try {
     const result = validateCard(req.body);
     const id = parseInt(req.params.id);
@@ -160,6 +173,7 @@ app.post("/api/columns/:id", async (req, res) => {
     let status;
     if (result.error) {
       console.log("I have an error");
+      console.log(result.error);
       res.status(400).send(result.error.details[0].message);
       return;
     }
@@ -189,6 +203,11 @@ app.post("/api/columns/:id", async (req, res) => {
       statusClass: req.body.statusClass,
       classDisplay: status,
     };
+    console.log(req.file, "asfasfasfasf")
+    if (req.file) {
+        console.log("sgjasngasgnasjg")
+      card.img = "images/" + req.file.filename;
+    }
 
     console.log(card);
 
@@ -202,37 +221,75 @@ app.post("/api/columns/:id", async (req, res) => {
   }
 });
 
-app.put("/api/columns/:id/cards/:cardId", async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-    const cardId = parseInt(req.params.cardId);
-    const result = validateCard(req.body);
-    const updateData = req.body;
-    console.log(result);
-    console.log(req.body);
-    if (result.error) {
-      console.log("I have an error");
-      res.status(400).send(result.error.details[0].message);
-      return;
+app.put(
+  "/api/columns/:id/cards/:cardId",
+  upload.single("img"),
+  async (req, res) => {
+    try {
+      let status;
+      const id = parseInt(req.params.id);
+      const cardId = parseInt(req.params.cardId);
+      const result = validateCard(req.body);
+      const updateData = req.body;
+      console.log(result);
+      console.log(req.body);
+        console.log(req.body.img)
+
+      //console.log(req.file.filename)
+
+      if (result.error) {
+        console.log("I have an error");
+        res.status(400).send(result.error.details[0].message);
+        return;
+      }
+
+      const column = await Column.findOne({ id: req.params.id });
+      if (!column) {
+        return res.status(404).send("Column not found");
+      }
+
+      const card = column.cards.find((card) => card.id === cardId);
+      if (!card) {
+        return res.status(404).send("Card not found");
+      }
+
+      switch (req.body.statusClass) {
+        case "non-urgent":
+          status = "Not Urgent";
+          console.log(status, "=");
+          break;
+        case "critical":
+          status = "Critical";
+          console.log(status, "=");
+          break;
+        case "urgent":
+          status = "Urgent";
+          console.log(status, "=");
+          break;
+      }
+
+      const updateDataMongo = {
+        header: updateData.header,
+        task1Name: updateData.task1Name,
+        task2Name: updateData.task2Name,
+        statusClass: updateData.statusClass,
+        classDisplay: status,
+      };
+
+      if (req.file) {
+       console.log("In file")
+       updateDataMongo.img = "images/" + req.file.filename;
     }
 
-    const column = await Column.findOne({ id: req.params.id });
-    if (!column) {
-      return res.status(404).send("Column not found");
+      Object.assign(card, updateDataMongo);
+      await column.save();
+      res.json(card);
+    } catch (error) {
+      console.log(error)
+      res.status(500).send(error.message);
     }
-
-    const card = column.cards.find((card) => card.id === cardId);
-    if (!card) {
-      return res.status(404).send("Card not found");
-    }
-
-    Object.assign(card, updateData);
-    await column.save();
-    res.json(card);
-  } catch (error) {
-    res.status(500).send(error.message);
   }
-});
+);
 
 app.delete("/api/columns/:id/cards/:cardId", async (req, res) => {
   try {
@@ -273,6 +330,7 @@ const validateCard = (cards) => {
     task1Name: Joi.string().required(),
     task2Name: Joi.string().required(),
     statusClass: Joi.string().required(),
+    img: Joi.allow(""),
   });
 
   return schema.validate(cards);
